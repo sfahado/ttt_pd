@@ -34,8 +34,8 @@ class Game < ApplicationRecord
 
   def check_winner
     board_moves = moves.filled
-    player1 = board_moves.cross.pluck(:position)
-    player2 = board_moves.nought.pluck(:position)
+    player1 = board_moves.cross.pluck(:position).sort
+    player2 = board_moves.nought.pluck(:position).sort
 
     if WINNING_COMBINATIONS.include?(player1)
       user = user_games.cross.user
@@ -49,26 +49,9 @@ class Game < ApplicationRecord
     [nil, false]
   end
 
-  def new_game
-    [*1..9].each do |i|
-      moves.new(position: i)
-    end
-    save! && self
-  end
-
-  def withdraw!(game)
-    game.with_draw! if game.new_game? || game.started?
-
-    game.user_games.update_all(result: UserGame::RESULTS[:tie])
-
-    ActionCable.server.broadcast("game_channel_#{game.id}",
-                                 { action: 'with_draw',
-                                   result: game.attributes.slice(*GAME_STATUS) })
-  end
-
-  def finish!(game, winner_id = nil)
+  def finish!(winner_id = nil)
     finilised_result(winner_id)
-    game.finished!
+    finished!
   end
 
   def game_board
@@ -82,14 +65,33 @@ class Game < ApplicationRecord
     end.as_json
   end
 
+  def new_game
+    [*1..9].each do |i|
+      moves.new(position: i)
+    end
+    save! && self
+  end
+
+  def withdraw!
+    ActiveRecord::Base.transaction do
+      with_draw! if new_game? || started?
+    end
+    user_games.update_all(result: UserGame::RESULTS[:tie])
+    ActionCable.server.broadcast("game_channel_#{id}",
+                                 { action: 'with_draw',
+                                   result: attributes.slice(*GAME_STATUS) })
+  end
+
   private
 
-  def finilised_result(winner_id)
-    if winner_id.present?
-      user_games.find_by(winner_id: winner_id, game_id: id).win!
-      user_games.where.not(winner_id: winner_id, game_id: id).lost!
-    else
-      user_games.update_all(result: UserGame::RESULTS[:tie])
+  def finilised_result(winner_id = nil)
+    ActiveRecord::Base.transaction do
+      if winner_id.present?
+        user_games.find_by(user_id: winner_id, game_id: id).update_attributes(result: UserGame::RESULTS[:win])
+        user_games.where(game_id: id).where.not(user_id: winner_id).update_all(result: UserGame::RESULTS[:lost])
+      else
+        user_games.update_all(result: UserGame::RESULTS[:tie])
+      end
     end
   end
 end

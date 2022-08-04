@@ -31,22 +31,28 @@ module GameService
     end
 
     def game_playing
-      if check_turn && game.moves.find_by(position: move).box.nil?
-        game.moves.find_by(position: move).update_attributes(box: Game::MOVES[user_game.symbol.to_sym])
-        user_states(game.user_games, user_id)
-        ActionCable.server.broadcast("game_channel_#{game.id}", { game: game.game_board.as_json,
-                                                                  action: 'game_start' })
-      else
-        ActionCable.server.broadcast("game_channel_#{game.id}", { game: game.game_board.as_json,
-                                                                  action: 'wrong_turn' })
+      ActiveRecord::Base.transaction do
+        game.with_lock do
+          if check_turn && game.moves.find_by(position: move).box.nil?
+            game.moves.find_by(position: move).update_attributes(box: Game::MOVES[user_game.symbol.to_sym])
+            user_states(game.user_games, user_id)
+            ActionCable.server.broadcast("game_channel_#{game.id}", { game: game.game_board.as_json,
+                                                                      action: 'game_start' })
+          else
+            ActionCable.server.broadcast("game_channel_#{game.id}", { game: game.game_board.as_json,
+                                                                      action: 'wrong_turn' })
+          end
+        end
       end
     end
 
     private
 
     def user_states(players, current_user)
-      players.where(user_id: current_user).first.toggle!(:move_allowed)
-      players.where.not(user_id: current_user).first.toggle!(:move_allowed)
+      ActiveRecord::Base.transaction do
+        players.where(user_id: current_user).first.toggle!(:move_allowed)
+        players.where.not(user_id: current_user).first.toggle!(:move_allowed)
+      end
     end
   end
 end

@@ -9,9 +9,9 @@ class Move < ApplicationRecord
   scope :filled, -> { where(box: [1, 2]) }
   scope :cross, -> { where(box: 1) }
   scope :nought, -> { where(box: 2) }
-  after_update_commit :check_winner
+  after_update_commit :check_game_winner
 
-  def check_winner
+  def check_game_winner
     winner = false
     tie = false
     user, winner = game.check_winner if game.moves.filled.count >= 4

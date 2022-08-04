@@ -2,7 +2,6 @@
 set -e
 
 echo "Required Docker-compose installed"
-echo "Insert GIST NAME"
 
 # Remove a potentially pre-existing server.pid for Rails.
 rm -f /ttt_pd/tmp/pids/server.pid

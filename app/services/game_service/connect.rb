@@ -17,13 +17,17 @@ module GameService
     protected
 
     def ensure_game_connection
-      return nil unless Game.new_games.exists?
+      ActiveRecord::Base.transaction do
+        return nil unless Game.new_games.exists?
 
-      game = Game.new_games.first
-      game.users << user
-      game.started!
-      game.user_games.first.toggle!(:move_allowed) if game.user_games.present?
-      game
+        game = Game.new_games.first
+        game.with_lock do
+          game.users << user
+          game.started!
+          game.user_games.first.toggle!(:move_allowed) if game.user_games.present?
+          game
+        end
+      end
     end
   end
 end

@@ -25,6 +25,6 @@ class GameChannel < ApplicationCable::Channel
 
   def end_game
     game = Game.find_by(id: params[:game_id]) unless params[:game_id].blank?
-    game.finish!(game, params[:user_id]) if game.present?
+    game.finish!(params[:user_id]) if game.present?
   end
 end

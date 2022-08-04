@@ -25,10 +25,6 @@ class UserGame < ApplicationRecord
   scope :cross, -> { find_by(symbol: MOVES[:cross]) }
   scope :nought, -> { find_by(symbol: MOVES[:nought]) }
 
-  def status_changed_to_new_game?
-    game.status.eql?(['new_game'])
-  end
-
   def assign_the_game_symbol
     self.symbol = if game.user_games.count.zero?
                     MOVES[:cross]

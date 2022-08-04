@@ -22,7 +22,7 @@ module GameService
     end
 
     def check_opponent
-      return true if game.user_games.starting_games.where(game_id: game_id).count >= 2
+      return true if game.user_games.where(game_id: game_id).count >= 2
 
       ActionCable.server.broadcast("game_channel_#{game.id}", { action: 'connected' })
       false

@@ -33,7 +33,20 @@ players (either X or O)
 
 Follow instructions here: [docs/setup-requirements-ubuntu.md](docs/setup-requirements-ubuntu.md)
 
+### Build and start:
+``docker-compose up``
+### Setup db:
+``docker-compose run web rake db:setup db:migrate``
 
 ### Try it out
 
 Open a browser and navigate to [http://localhost:3000/](http://localhost:3000/)
+
+
+### Run the bash command line
+
+``docker exec -it ttt_pd-web-1 bash``
+
+After Entering into the container, you can run the specs
+
+by typing ``rspec`` in the command line
