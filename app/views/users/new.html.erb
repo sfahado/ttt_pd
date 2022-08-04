@@ -1,0 +1,16 @@
+<div class="container d-flex flex-column align-items-center">
+  <br/>
+  <%= link_to 'Home',root_path %>
+  <div class="row ">
+    <div class="col m-lg-4">
+      <h1> <%= t('title') %> </h1>
+    </div>
+    <div class="row" >
+      <div class="col">
+        <%= render partial: "form" %>
+      </div>
+    </div>
+  </div>
+</div>
+
+

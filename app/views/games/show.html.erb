@@ -1,0 +1,14 @@
+<div class="d-flex justify-content-center">
+  <div class="row">
+    <div id="game-user" class="col m-lg-4" data-user-id="<%= @user.id %>">
+      <span id="game_status"></span>
+      <span data-user-connected="false"></span>
+      <strong><%= @user.name.upcase %> </strong>
+      <% if @game.new_game? %>
+        <h3 class="justify-content-center" id="instructions"> Select box to get started! </h3>
+      <% end %>
+    </div>
+      <%= render partial: "form", locals: { game: @game } %>
+    </div>
+  </div>
+</div>

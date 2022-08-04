@@ -1,0 +1,10 @@
+// Place all the styles related to the Games controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+#game_status {
+  color: grey;
+  font-size:15px;
+  -webkit-transition: opacity 0.3s linear;
+  transition: opacity 0.3s linear;
+}
+#game_status.show { opacity:1 }

@@ -1,0 +1,27 @@
+<div class="justify-content-center card">
+  <div class="card-header"><%= t('name') %></div>
+  <div class="form-outline mb-4">
+    <%= form_for @user do |form| %>
+      <% if @user.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+          <ul>
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+    <div class="row ">
+      <div class="ps-3 col-lg-9">
+        <%= form.text_field :name, class: "form-control", placeholder: t('username') %>
+      </div>
+      <div class="ps-3 col-lg-3 text-center">
+        <%= form.submit t('start_game'), class: "btn btn-primary btn-block mb-2" %>
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>

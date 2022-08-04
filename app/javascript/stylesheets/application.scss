@@ -1,0 +1,40 @@
+@import "~bootstrap/scss/bootstrap";
+
+#game-board {
+  .tile {
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+  }
+  .text-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .player_1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: lightyellow no-repeat center;
+    width: 100px;
+    height: 100px;
+    content:  "\2713";
+    font-size: 40px;
+  }
+  .player_1:after {
+    content: '\d7';
+  }
+  .player_2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: lightskyblue no-repeat center;
+    min-width: 100px;
+    min-height: 100px;
+    font-size: 40px;
+    content:  "\2713";
+  }
+  .player_2:after {
+    content: '\2B55';
+  }
+}

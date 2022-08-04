@@ -1,0 +1,13 @@
+<div id="game-board" data-game-id="<%= @game.id %>">
+  <% 3.times do |i| %>
+    <div class="row row-<%="#{i + 1}"%>">
+      <% 3.times do |j| %>
+        <% board_box =  @game.moves.find_by(position: i * 3 + j + 1) %>
+        <% if board_box.present? %>
+          <div class="col tile text-center" id="game-move-<%="#{board_box.position}"%>" style="cursor: pointer">
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
