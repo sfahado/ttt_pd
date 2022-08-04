@@ -20,7 +20,7 @@ jQuery(document).on 'turbolinks:load', ->
           alert 'Player input wrong box, try other box..!!'
         when 'new_game'
           $('#game_status').html('Player found, ')
-        when "game_start"
+        when 'game_start'
           $('#game_status').html('Game Started, ')
           $("#instructions").html('')
           html = ''
@@ -50,12 +50,12 @@ jQuery(document).on 'turbolinks:load', ->
           alert 'Wait for other player!!'
         when 'result'
           if data.winner
-            alert(data.user + 'Won')
+            alert(data.user.name + ', Won')
           else if data.tie
             alert('It\'s Tie')
           if data.path
             window.location.pathname = data.path
-          @perform 'end_game', game_id: data.game_id
+          @perform 'end_game', game_id: data.game_id, user_id: data.user.id
 
     send_game: (game_id, user_id, move) ->
       @perform 'send_game', game_id: game_id, user_id: user_id, move: move

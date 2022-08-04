@@ -22,6 +22,7 @@ module GameService
 
     def check_turn
       @user_game = game.user_games.find_by(user_id: user_id, game_id: game_id)
+      # game.moves.select(&:box).empty? ? @user_game.toggle!(:move_allowed) : @user_game.move_allowed
       @user_game.move_allowed
     end
 

@@ -38,12 +38,12 @@ class Game < ApplicationRecord
     player2 = board_moves.nought.pluck(:position)
 
     if WINNING_COMBINATIONS.include?(player1)
-      user = user_games.cross.user.name
+      user = user_games.cross.user
       return [user, true]
     end
 
     if WINNING_COMBINATIONS.include?(player2)
-      user = user_games.nought.user.name
+      user = user_games.nought.user
       return [user, true]
     end
     [nil, false]
@@ -59,12 +59,15 @@ class Game < ApplicationRecord
   def withdraw!(game)
     game.with_draw! if game.new_game? || game.started?
 
+    game.user_games.update_all(result: UserGame::RESULTS[:tie])
+
     ActionCable.server.broadcast("game_channel_#{game.id}",
                                  { action: 'with_draw',
                                    result: game.attributes.slice(*GAME_STATUS) })
   end
 
-  def finish!(game)
+  def finish!(game, winner_id = nil)
+    finilised_result(winner_id)
     game.finished!
   end
 
@@ -77,5 +80,16 @@ class Game < ApplicationRecord
         box: move.box
       }
     end.as_json
+  end
+
+  private
+
+  def finilised_result(winner_id)
+    if winner_id.present?
+      user_games.find_by(winner_id: winner_id, game_id: id).win!
+      user_games.where.not(winner_id: winner_id, game_id: id).lost!
+    else
+      user_games.update_all(result: UserGame::RESULTS[:tie])
+    end
   end
 end

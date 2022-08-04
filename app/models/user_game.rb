@@ -4,7 +4,8 @@ class UserGame < ApplicationRecord
   belongs_to :game
   belongs_to :user
 
-  before_create :assign_the_game_symbol # , if: :status_changed_to_new_game?
+  before_create :assign_the_game_symbol
+
   RESULTS ||= {
     win: 1,
     lost: 2,

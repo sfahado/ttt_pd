@@ -18,7 +18,7 @@ class Move < ApplicationRecord
     tie = (game.moves.filled.count >= 9)
     if winner || tie
       ActionCable.server.broadcast("game_channel_#{game.id}",
-                                   { action: 'result', winner: winner, tie: tie, user: user,
+                                   { action: 'result', winner: winner, tie: tie, user: { id: user&.id, name: user&.name },
                                      game_id: game.id, path: '/users/new' })
     end
   end
